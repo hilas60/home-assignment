@@ -8,6 +8,7 @@ type UserAvatarProps = AvatarProps & {
 
 export const UserAvatar = forwardRef<HTMLDivElement, UserAvatarProps>(
   ({ user, ...props }, ref) => {
-    return <Avatar alt={user.name} src={user.avatar} ref={ref} {...props} />;
+    const initials = user.name.split(" ").map(word => word.substring(0,1));
+    return <Avatar  alt={user.name} src={user.avatar} ref={ref} {...props}>{initials}</Avatar>;
   }
 );
