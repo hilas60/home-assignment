@@ -1,8 +1,9 @@
-import express, { Express, Request, Response } from "express";
-import cors from "cors";
 
-const app: Express = express();
-app.use(cors());
+
+import { Request, Response } from "express";
+
+import app from './app';
+
 const port = 3000;
 
 app.get("/", (req: Request, res: Response) => {
