@@ -14,22 +14,6 @@ interface PostEditorProps {
 export const PostEditor: React.FC<PostEditorProps> = ({isOpen, activeUser, post, handleSubmit, handleClose}) => {
   const title = post ? "Edit Post" : "Create New Post";
 
-  // showing a default prefix for url on image url focus
-  const inputRef = useRef<HTMLInputElement>(null);
-  const defaultValue = 'https://';
-
-  const handleFocus = () => {
-    if (inputRef.current && inputRef.current.value === '') {
-      inputRef.current.value = defaultValue;
-    }
-  };
-
-  const handleBlur = () => {
-    if (inputRef.current && inputRef.current.value === defaultValue) {
-      inputRef.current.value = '';
-    }
-  };
-
   const submitPost = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
@@ -67,10 +51,6 @@ export const PostEditor: React.FC<PostEditorProps> = ({isOpen, activeUser, post,
             type="url"
             fullWidth
             variant="standard"
-            inputProps={{ pattern: "https?://.+" }}
-            onFocus={handleFocus}
-            onBlur={handleBlur}
-            inputRef={inputRef}
           />
           <TextField
             autoFocus
