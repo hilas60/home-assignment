@@ -23,8 +23,9 @@ function App() {
             key={post.id}
             post={post} 
             userInfo={getUserById(post.userId)} 
-            isActiveUserPost={post.userId === activeUser.id}
+            activeUser={activeUser}
             onDeletePost={deletePost}
+            handleSubmit={createOrEditPost}
           />)}
       </div>
       <PostEditor 

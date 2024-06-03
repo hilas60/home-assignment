@@ -63,6 +63,7 @@ export const PostEditor: React.FC<PostEditorProps> = ({isOpen, activeUser, post,
             type="text"
             fullWidth
             variant="standard"
+            defaultValue={post ? post.content : ""}
           />
         </DialogContent>
         <DialogActions>

@@ -44,6 +44,24 @@ export const usePosts = () => {
       }
     }
 
+    const editPost = async (updatedPost: CreatePostData) => {
+      try {
+        const response = await fetch(BASE_URL + '/api/posts/' + updatedPost.id, { 
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(updatedPost)
+        });
+        const newPost = await response.json();
+        const updatedPosts = posts.map(post => post.id === newPost.id ? newPost:post)
+        setPosts(updatedPosts);
+      } catch (err) {
+        const error = err as Error;
+        setError(error.message);
+      }
+    }
+
     const createOrEditPost = async (post: CreatePostData) => {
       if (post.id === 0) {
         createNewPost(post);

@@ -5,22 +5,29 @@ import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 
-import { PostData, UserData } from "../../types";
+import { CreatePostData, PostData, UserData } from "../../types";
 import { UserAvatar } from "../UserAvatar";
+import { PostEditor } from "../PostEditor";
+import { DeleteDialog } from "./Dialogs";
 import "./styles.css";
 
 
 interface PostProps {
     post: PostData;
     userInfo: UserData;
-    isActiveUserPost: boolean;
+    activeUser: UserData;
     onDeletePost: (id: number) => void;
+    handleSubmit: (content: CreatePostData) => void;
 }
 
-export const Post: React.FC<PostProps> = ({post, userInfo, isActiveUserPost, onDeletePost}) => {
+export const Post: React.FC<PostProps> = ({post, userInfo, activeUser, onDeletePost, handleSubmit}) => {
   const [isDeletePostOpen, setIsDeletePostOpen] = useState(false)
+  const [isEditPostOpen, setIsEditPostOpen] = useState(false)
+
+  const isActiveUserPost = activeUser.id === post.userId;
 
   const toggleDeleteConfirmationModal = () => setIsDeletePostOpen(prev => !prev);
+  const toggleEditConfirmationModal = () => setIsEditPostOpen(prev => !prev);
   
   const handleDeletePost = () => {
     toggleDeleteConfirmationModal();
@@ -48,7 +55,7 @@ export const Post: React.FC<PostProps> = ({post, userInfo, isActiveUserPost, onD
         <Container style={{paddingLeft: 0}}>
           {isActiveUserPost && 
           <>
-            <IconButton aria-label="edit post">
+            <IconButton aria-label="edit post" onClick={toggleEditConfirmationModal}>
               <EditIcon />
             </IconButton>
             <IconButton aria-label="delete post" onClick={toggleDeleteConfirmationModal}>
@@ -62,25 +69,17 @@ export const Post: React.FC<PostProps> = ({post, userInfo, isActiveUserPost, onD
         </IconButton>
       </CardActions>
     </Card>
-    <Dialog
-      open={isDeletePostOpen}
-      onClose={toggleDeleteConfirmationModal}
-    >
-      <DialogTitle>
-        Delete Post
-      </DialogTitle>
-      <DialogContent>
-        <DialogContentText>
-          Are you sure you want to delete this post?
-        </DialogContentText>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={toggleDeleteConfirmationModal}>Cancel</Button>
-        <Button onClick={handleDeletePost} color="error" autoFocus>
-          Delete
-        </Button>
-      </DialogActions>
-    </Dialog>
+    <DeleteDialog 
+      isOpen={isDeletePostOpen}
+      handleDeletePost={handleDeletePost}
+      toggleModal={toggleDeleteConfirmationModal}/>
+    <PostEditor 
+      isOpen={isEditPostOpen}
+      activeUser={activeUser}
+      handleClose={toggleEditConfirmationModal}
+      handleSubmit={handleSubmit}
+      post={post}
+    />
   </>
   )
 };
