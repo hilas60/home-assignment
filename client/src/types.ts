@@ -6,6 +6,8 @@ export type PostData = {
   imageUrl?: string;
 };
 
+export type CreatePostData = Omit<PostData, 'date'> & { id?: number};
+
 export type UserData = {
   id: number;
   name: string;
