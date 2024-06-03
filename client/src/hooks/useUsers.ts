@@ -9,6 +9,7 @@ interface UseUsersResult {
   loading: boolean;
   error: string | null;
   switchUser: () => void;
+  getUserById: (id: number) => UserData;
 }
 
 export const useUsers = (): UseUsersResult => {
@@ -39,7 +40,6 @@ export const useUsers = (): UseUsersResult => {
     fetchUsers();
   }, []);
 
-
   useEffect(() => {
     if(users.length && activeUser.id === 0){
       switchUser();
@@ -60,6 +60,15 @@ export const useUsers = (): UseUsersResult => {
     }
   };
 
+  const usersMap = users.reduce((acc, user) => {
+    acc[user.id] = user;
+    return acc;
+  }, {} as Record<number, UserData>)
+
+  const getUserById = (id: number) => {
+    return usersMap[id] || { id: 0, name: "" };
+  }
+
   return {
     users,
     activeUser,
@@ -67,6 +76,7 @@ export const useUsers = (): UseUsersResult => {
     loading,
     error,
     switchUser,
+    getUserById
   };
 };
 
