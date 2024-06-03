@@ -16,8 +16,8 @@ export const useUsers = (): UseUsersResult => {
   const [users, setUsers] = useState<UserData[]>([]);
   const [activeUser, setActiveUser] = useState<UserData>({ id: 0, name: "" });
   const [remainingUsers, setRemainingUsers] = useState<UserData[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(true); // in case we will want to show a loading state in the UI
+  const [error, setError] = useState<string | null>(null); // in case we will want to show error indication in the UI
 
   useEffect(() => {
     const fetchUsers = async () => {
