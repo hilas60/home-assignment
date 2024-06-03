@@ -16,7 +16,7 @@ export const createPost = async (req: Request, res: Response) => {
     const postInfo = req.body as CreatePostData;
     console.log({body: req.body})
     const newPost = await createNewPost(postInfo);
-    res.json(newPost).status(201);
+    res.status(201).json(newPost);
   } catch (err) {
     const error  = err as Error;
     res.status(500).json({ message: error.message });
