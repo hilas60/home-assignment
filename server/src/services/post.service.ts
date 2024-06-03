@@ -8,7 +8,7 @@ function readDB() {
   return JSON.parse(data);
 }
 
-function writeDB(data: PostData) {
+function writeDB(data: PostData[]) {
   fs.writeFileSync(dbPath, JSON.stringify(data, null, 2), 'utf-8');
 }
 
@@ -35,7 +35,8 @@ export const createNewPost = async (post: CreatePostData) => {
   try {
     const dbPosts = readDB();
 
-    const newId = dbPosts.length + 1000; // creating a new id with the same structure of current ids
+    const lastPostIdx = dbPosts.length - 1;
+    const newId = dbPosts[lastPostIdx].id + 1; // creating a new id with the same structure of current ids
     const newPost = {...post, date: new Date(), id: newId};
 
     dbPosts.push(newPost);
@@ -43,7 +44,16 @@ export const createNewPost = async (post: CreatePostData) => {
     
     return newPost;
   } catch (error) {
-    throw new Error('failed to write to database' + error) 
+    throw new Error('failed to add post to database, error:' + error) 
   }
+}
 
+export const deletePostFromDb = async (id: number) => {
+  try {
+    const dbPosts: PostData[] = readDB();
+    const updatedPosts = dbPosts.filter(post => post.id !== id);
+    writeDB(updatedPosts);
+  } catch (error) {
+    throw new Error(`failed to delete post ${id} from database, error: ${error}`) 
+  }
 }
