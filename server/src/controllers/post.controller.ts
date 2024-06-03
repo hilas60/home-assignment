@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { getAllPosts } from '../services/post.service';
+import { getAllPosts, createNewPost, CreatePostData } from '../services/post.service';
 
 export const getPosts = async (req: Request, res: Response) => {
   try {
@@ -10,3 +10,15 @@ export const getPosts = async (req: Request, res: Response) => {
       res.status(500).json({ message: error.message });
   }
 };
+
+export const createPost = async (req: Request, res: Response) => {
+  try {
+    const postInfo = req.body as CreatePostData;
+    console.log({body: req.body})
+    const newPost = await createNewPost(postInfo);
+    res.json(newPost).status(201);
+  } catch (err) {
+    const error  = err as Error;
+    res.status(500).json({ message: error.message });
+  }
+}
