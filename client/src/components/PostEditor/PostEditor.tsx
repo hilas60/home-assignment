@@ -1,5 +1,94 @@
+import { useRef } from "react";
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField } from "@mui/material";
+import { CreatePostData, PostData, UserData } from "../../types";
 import "./styles.css";
 
-export const PostEditor: React.FC = () => {
-  return null;
+interface PostEditorProps {
+  isOpen: boolean;
+  activeUser: UserData;
+  post?: PostData;
+  handleSubmit: (content: CreatePostData) => void;
+  handleClose: () => void;
+}
+
+export const PostEditor: React.FC<PostEditorProps> = ({isOpen, activeUser, post, handleSubmit, handleClose}) => {
+  const title = post ? "Edit Post" : "Create New Post";
+
+  // showing a default prefix for url on image url focus
+  const inputRef = useRef<HTMLInputElement>(null);
+  const defaultValue = 'https://';
+
+  const handleFocus = () => {
+    if (inputRef.current && inputRef.current.value === '') {
+      inputRef.current.value = defaultValue;
+    }
+  };
+
+  const handleBlur = () => {
+    if (inputRef.current && inputRef.current.value === defaultValue) {
+      inputRef.current.value = '';
+    }
+  };
+
+  const submitPost = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const {content, imageUrl} = Object.fromEntries((formData as any).entries());
+    handleSubmit({
+      content, 
+      imageUrl, 
+      userId: activeUser.id,
+      id: post?.id || 0
+    })
+    handleClose();
+  }
+  
+  return (
+    <Dialog
+        open={isOpen}
+        onClose={handleClose}
+        PaperProps={{
+          component: 'form',
+          onSubmit: submitPost
+        }}
+          fullWidth
+          maxWidth={'sm'}
+          disableScrollLock
+        >
+        <DialogTitle>{title}</DialogTitle>
+        <DialogContent
+        >
+          <TextField
+            autoFocus
+            margin="dense"
+            id="imageUrl"
+            name="imageUrl"
+            label="Image URL"
+            type="url"
+            fullWidth
+            variant="standard"
+            inputProps={{ pattern: "https?://.+" }}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+            inputRef={inputRef}
+          />
+          <TextField
+            autoFocus
+            required
+            multiline
+            margin="dense"
+            id="content"
+            name="content"
+            label="Post Content"
+            type="text"
+            fullWidth
+            variant="standard"
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Cancel</Button>
+          <Button type="submit">Submit</Button>
+        </DialogActions>
+      </Dialog>
+  );
 };

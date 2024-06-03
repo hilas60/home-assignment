@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Header } from "./components";
+import { Header, PostEditor } from "./components";
 import { useUsers } from "./hooks/useUsers";
 import { usePosts } from "./hooks/usePosts";
 import { Post } from "./components/Post";
@@ -8,7 +8,7 @@ import './index.css';
 function App() {
 
   const { getUserById, activeUser, switchUser } = useUsers();
-  const { posts } = usePosts();
+  const { posts, createOrEditPost } = usePosts();
 
   const [isPostEditorOpen, setIsPostEditorOpen] = useState(false);
 
@@ -26,6 +26,12 @@ function App() {
             isActiveUserPost={post.userId === activeUser.id}
           />)}
       </div>
+      <PostEditor 
+        activeUser={activeUser}
+        isOpen={isPostEditorOpen}
+        handleSubmit={createOrEditPost}
+        handleClose={() => setIsPostEditorOpen(false)}
+      />
     </>
   );
 }
