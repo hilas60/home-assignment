@@ -4,8 +4,8 @@ import { BASE_URL } from "../consts";
 
 export const usePosts = () => {
     const [posts, setPosts] = useState<PostData[]>([]);
-    const [loading, setLoading] = useState<boolean>(true);
-    const [error, setError] = useState<string | null>(null);
+    const [loading, setLoading] = useState<boolean>(true); // in case we will want to show a loading state in the UI
+    const [error, setError] = useState<string | null>(null); // in case we will want to show error indication in the UI
 
     const fetchPosts = async () => {
       try {
@@ -28,15 +28,20 @@ export const usePosts = () => {
     }, [])
     
     const createNewPost = async (post: CreatePostData) => {
-      const response = await fetch(BASE_URL + '/api/posts', { 
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(post)
-      });
-      const newPost = await response.json();
-      setPosts(prev => [newPost, ...prev ]);
+      try {
+        const response = await fetch(BASE_URL + '/api/posts', { 
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(post)
+        });
+        const newPost = await response.json();
+        setPosts(prev => [newPost, ...prev ]);
+      } catch (err) {
+        const error = err as Error;
+        setError(error.message);
+      }
     }
 
     const createOrEditPost = async (post: CreatePostData) => {
@@ -47,8 +52,25 @@ export const usePosts = () => {
       }
     }
 
+    const deletePost = async (id:number) => {
+      try {
+        console.log({id})
+        const response = await fetch(BASE_URL + '/api/posts/' + id, { 
+          method: "DELETE"
+        });
+        if (!response.ok) {
+          throw new Error('Failed to fetch users');
+        }
+        const filteredPosts = posts.filter(post => post.id !==id);
+        setPosts(filteredPosts);
+      } catch (err) {
+        const error = err as Error;
+        setError(error.message);
+      }
+    }
     return {
         posts,
-        createOrEditPost
+        createOrEditPost,
+        deletePost
     }
 }
