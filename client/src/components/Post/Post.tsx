@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { Badge, Card, CardActions, CardContent, CardHeader, CardMedia, Container, IconButton, Typography } from "@mui/material";
+import { Badge, Card, CardActions, CardContent, CardHeader, CardMedia, Container, IconButton, Tooltip, Typography } from "@mui/material";
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -14,19 +14,20 @@ import "./styles.css";
 
 interface PostProps {
     post: PostData;
-    userInfo: UserData;
     activeUser: UserData;
+    getUserInfo: (id: number) => UserData;
     onDeletePost: (id: number) => void;
     handleLike: (id: number, userId: number) => void;
     handleSubmit: (content: CreatePostData) => void;
 }
 
-export const Post: React.FC<PostProps> = ({post, userInfo, activeUser, onDeletePost, handleLike, handleSubmit}) => {
+export const Post: React.FC<PostProps> = ({post, activeUser, getUserInfo, onDeletePost, handleLike, handleSubmit}) => {
   const [isDeletePostOpen, setIsDeletePostOpen] = useState(false)
   const [isEditPostOpen, setIsEditPostOpen] = useState(false)
 
+  const postUser = getUserInfo(post.userId);
   const isActiveUserPost = activeUser.id === post.userId;
-  const isPostLiked = post?.userLikes?.length;
+  const userLikes = post?.userLikes?.map(like => getUserInfo(like).name);
 
   const toggleDeleteConfirmationModal = () => setIsDeletePostOpen(prev => !prev);
   const toggleEditConfirmationModal = () => setIsEditPostOpen(prev => !prev);
@@ -44,8 +45,8 @@ export const Post: React.FC<PostProps> = ({post, userInfo, activeUser, onDeleteP
   <>
     <Card className="post-content">
       <CardHeader
-        avatar={<UserAvatar user={userInfo}/>}
-        title={ <Typography variant='body1'>{userInfo.name}</Typography>}
+        avatar={<UserAvatar user={postUser}/>}
+        title={ <Typography variant='body1'>{postUser.name}</Typography>}
         subheader={<Typography variant="body2" color="GrayText">{post.date}</Typography>}
         />
       {post.imageUrl && <CardMedia
@@ -70,9 +71,15 @@ export const Post: React.FC<PostProps> = ({post, userInfo, activeUser, onDeleteP
           </>
           }
         </Container>
-        <Badge color='primary' badgeContent={isPostLiked}>
+        <Badge color='primary' badgeContent={userLikes?.length > 0 && 
+            <Tooltip title={userLikes.join(', ')}>
+              <span>
+                {userLikes.length}
+              </span>
+            </Tooltip>
+          }>
           <IconButton aria-label="like post" onClick={handleLikeClick}>
-            <ThumbUpIcon color={isPostLiked? 'primary':'inherit'} />
+            <ThumbUpIcon color={userLikes? 'primary':'inherit'} />
           </IconButton>
         </Badge>
       </CardActions>

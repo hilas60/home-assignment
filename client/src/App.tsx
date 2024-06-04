@@ -22,8 +22,8 @@ function App() {
           <Post 
             key={post.id}
             post={post} 
-            userInfo={getUserById(post.userId)} 
             activeUser={activeUser}
+            getUserInfo={getUserById}
             onDeletePost={deletePost}
             handleLike={updatePostLikeCount}
             handleSubmit={createOrEditPost}
