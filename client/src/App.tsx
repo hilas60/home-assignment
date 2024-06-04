@@ -8,7 +8,7 @@ import './index.css';
 function App() {
 
   const { getUserById, activeUser, switchUser } = useUsers();
-  const { posts, createOrEditPost,  deletePost} = usePosts();
+  const { posts, createOrEditPost,  deletePost, updatePostLikeCount} = usePosts();
 
   const [isPostEditorOpen, setIsPostEditorOpen] = useState(false);
 
@@ -25,6 +25,7 @@ function App() {
             userInfo={getUserById(post.userId)} 
             activeUser={activeUser}
             onDeletePost={deletePost}
+            handleLike={updatePostLikeCount}
             handleSubmit={createOrEditPost}
           />)}
       </div>
