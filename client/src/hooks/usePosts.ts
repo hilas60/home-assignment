@@ -66,7 +66,7 @@ export const usePosts = () => {
       if (post.id === 0) {
         createNewPost(post);
       } else {
-        // edit existing post
+        editPost(post);
       }
     }
 
