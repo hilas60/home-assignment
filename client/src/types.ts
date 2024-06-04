@@ -4,6 +4,7 @@ export type PostData = {
   content: string;
   date: string;
   imageUrl?: string;
+  userLikes: number[];
 };
 
 export type CreatePostData = Omit<PostData, 'date'> & { id?: number};

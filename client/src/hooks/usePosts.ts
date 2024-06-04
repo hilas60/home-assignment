@@ -72,7 +72,6 @@ export const usePosts = () => {
 
     const deletePost = async (id:number) => {
       try {
-        console.log({id})
         const response = await fetch(BASE_URL + '/api/posts/' + id, { 
           method: "DELETE"
         });
@@ -86,9 +85,23 @@ export const usePosts = () => {
         setError(error.message);
       }
     }
+
+    const updatePostLikeCount = (id: number, userId: number) => {
+      const post = posts.find(post => post.id === id);
+      let updatedUserLikes = post?.userLikes ? [...post.userLikes] : [];
+      if (updatedUserLikes.includes(userId)){
+        updatedUserLikes = updatedUserLikes.filter(id => id !== userId);
+      } else {
+        updatedUserLikes.push(userId);
+      }
+      const updatedPost:PostData = {...post as PostData, userLikes: updatedUserLikes};
+      editPost(updatedPost)
+    }
+
     return {
         posts,
         createOrEditPost,
-        deletePost
+        deletePost,
+        updatePostLikeCount
     }
 }

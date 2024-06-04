@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { Button, Card, CardActions, CardContent, CardHeader, CardMedia, Container, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, Typography } from "@mui/material";
+import { Badge, Card, CardActions, CardContent, CardHeader, CardMedia, Container, IconButton, Typography } from "@mui/material";
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -17,14 +17,16 @@ interface PostProps {
     userInfo: UserData;
     activeUser: UserData;
     onDeletePost: (id: number) => void;
+    handleLike: (id: number, userId: number) => void;
     handleSubmit: (content: CreatePostData) => void;
 }
 
-export const Post: React.FC<PostProps> = ({post, userInfo, activeUser, onDeletePost, handleSubmit}) => {
+export const Post: React.FC<PostProps> = ({post, userInfo, activeUser, onDeletePost, handleLike, handleSubmit}) => {
   const [isDeletePostOpen, setIsDeletePostOpen] = useState(false)
   const [isEditPostOpen, setIsEditPostOpen] = useState(false)
 
   const isActiveUserPost = activeUser.id === post.userId;
+  const isPostLiked = post?.userLikes?.length;
 
   const toggleDeleteConfirmationModal = () => setIsDeletePostOpen(prev => !prev);
   const toggleEditConfirmationModal = () => setIsEditPostOpen(prev => !prev);
@@ -32,6 +34,10 @@ export const Post: React.FC<PostProps> = ({post, userInfo, activeUser, onDeleteP
   const handleDeletePost = () => {
     toggleDeleteConfirmationModal();
     onDeletePost(post.id);
+  }
+
+  const handleLikeClick = () => {
+    handleLike(post.id, activeUser.id);
   }
 
   return (
@@ -51,7 +57,7 @@ export const Post: React.FC<PostProps> = ({post, userInfo, activeUser, onDeleteP
       <CardContent>
         <Typography variant="body2" color="text.secondary">{post.content}</Typography>
       </CardContent>
-      <CardActions>
+      <CardActions style={{padding: '8px 16px'}} >
         <Container style={{paddingLeft: 0}}>
           {isActiveUserPost && 
           <>
@@ -64,9 +70,11 @@ export const Post: React.FC<PostProps> = ({post, userInfo, activeUser, onDeleteP
           </>
           }
         </Container>
-        <IconButton aria-label="like post">
-          <ThumbUpIcon color={false? 'info':'inherit'} />
-        </IconButton>
+        <Badge color='primary' badgeContent={isPostLiked}>
+          <IconButton aria-label="like post" onClick={handleLikeClick}>
+            <ThumbUpIcon color={isPostLiked? 'primary':'inherit'} />
+          </IconButton>
+        </Badge>
       </CardActions>
     </Card>
     <DeleteDialog 
