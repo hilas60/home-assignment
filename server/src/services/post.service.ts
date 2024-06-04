@@ -48,6 +48,17 @@ export const createNewPost = async (post: CreatePostData) => {
   }
 }
 
+export const editDbPost = async (id: number, updatedPost: CreatePostData) => {
+  try {
+    const dbPosts: PostData[] = readDB();;
+    const updatedPosts = dbPosts.map(post => post.id === id ? updatedPost as PostData : post );
+    writeDB(updatedPosts);
+    return updatedPost;
+  } catch (error) {
+    throw new Error('failed to add post to database, error:' + error) 
+  }
+}
+
 export const deletePostFromDb = async (id: number) => {
   try {
     const dbPosts: PostData[] = readDB();
